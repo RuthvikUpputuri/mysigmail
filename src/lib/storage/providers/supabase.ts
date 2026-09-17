@@ -8,8 +8,8 @@ export class SupabaseProvider implements StorageProvider {
   constructor() {
     if (this.isConfigured()) {
       try {
-        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-        const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+        const supabaseUrl = import.meta.env.SUPABASE_URL
+        const supabaseKey = import.meta.env.SUPABASE_ANON_KEY
         this.supabase = createClient(supabaseUrl, supabaseKey)
       } catch (err) {
         console.error('Failed to initialize Supabase Client', err)
@@ -19,9 +19,9 @@ export class SupabaseProvider implements StorageProvider {
 
   isConfigured(): boolean {
     return !!(
-      import.meta.env.VITE_SUPABASE_URL &&
-      import.meta.env.VITE_SUPABASE_ANON_KEY &&
-      import.meta.env.VITE_SUPABASE_BUCKET
+      import.meta.env.SUPABASE_URL &&
+      import.meta.env.SUPABASE_ANON_KEY &&
+      import.meta.env.SUPABASE_BUCKET
     )
   }
 
@@ -30,7 +30,7 @@ export class SupabaseProvider implements StorageProvider {
       throw new Error('Supabase provider is not properly configured.')
     }
 
-    const bucketName = import.meta.env.VITE_SUPABASE_BUCKET
+    const bucketName = import.meta.env.SUPABASE_BUCKET
     const key = `signature/upload/${Date.now()}-${file.name}`
 
     const { error } = await this.supabase.storage

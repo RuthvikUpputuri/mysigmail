@@ -16,7 +16,7 @@ import { CustomHttpProvider } from './providers/custom'
 import { Base64Provider } from './providers/base64'
 
 export function getStorageProvider(): StorageProvider {
-  const providerName = import.meta.env.VITE_STORAGE_PROVIDER || 'none'
+  const providerName = import.meta.env.STORAGE_PROVIDER || 'none'
 
   let provider: StorageProvider
 

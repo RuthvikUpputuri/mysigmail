@@ -11,34 +11,34 @@ describe('Storage Provider Factory', () => {
   })
 
   it('should return Base64Provider by default when no provider is configured', () => {
-    vi.stubEnv('VITE_STORAGE_PROVIDER', '')
+    vi.stubEnv('STORAGE_PROVIDER', '')
     const provider = getStorageProvider()
     expect(provider).toBeInstanceOf(Base64Provider)
   })
 
-  it('should return GenericS3Provider when VITE_STORAGE_PROVIDER=s3', () => {
-    vi.stubEnv('VITE_STORAGE_PROVIDER', 's3')
-    vi.stubEnv('VITE_S3_BUCKET', 'test')
-    vi.stubEnv('VITE_S3_ACCESS_KEY_ID', 'test')
-    vi.stubEnv('VITE_S3_SECRET_ACCESS_KEY', 'test')
+  it('should return GenericS3Provider when STORAGE_PROVIDER=s3', () => {
+    vi.stubEnv('STORAGE_PROVIDER', 's3')
+    vi.stubEnv('S3_BUCKET', 'test')
+    vi.stubEnv('S3_ACCESS_KEY_ID', 'test')
+    vi.stubEnv('S3_SECRET_ACCESS_KEY', 'test')
     const provider = getStorageProvider()
     expect(provider).toBeInstanceOf(GenericS3Provider)
     expect(provider.isConfigured()).toBe(true)
   })
 
-  it('should return SupabaseProvider when VITE_STORAGE_PROVIDER=supabase', () => {
-    vi.stubEnv('VITE_STORAGE_PROVIDER', 'supabase')
-    vi.stubEnv('VITE_SUPABASE_URL', 'test')
-    vi.stubEnv('VITE_SUPABASE_ANON_KEY', 'test')
-    vi.stubEnv('VITE_SUPABASE_BUCKET', 'test')
+  it('should return SupabaseProvider when STORAGE_PROVIDER=supabase', () => {
+    vi.stubEnv('STORAGE_PROVIDER', 'supabase')
+    vi.stubEnv('SUPABASE_URL', 'test')
+    vi.stubEnv('SUPABASE_ANON_KEY', 'test')
+    vi.stubEnv('SUPABASE_BUCKET', 'test')
     const provider = getStorageProvider()
     expect(provider).toBeInstanceOf(SupabaseProvider)
     expect(provider.isConfigured()).toBe(true)
   })
 
-  it('should return CustomHttpProvider when VITE_STORAGE_PROVIDER=custom', () => {
-    vi.stubEnv('VITE_STORAGE_PROVIDER', 'custom')
-    vi.stubEnv('VITE_CUSTOM_UPLOAD_URL', 'test')
+  it('should return CustomHttpProvider when STORAGE_PROVIDER=custom', () => {
+    vi.stubEnv('STORAGE_PROVIDER', 'custom')
+    vi.stubEnv('CUSTOM_UPLOAD_URL', 'test')
     const provider = getStorageProvider()
     expect(provider).toBeInstanceOf(CustomHttpProvider)
     expect(provider.isConfigured()).toBe(true)

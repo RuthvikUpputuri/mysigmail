@@ -1,6 +1,4 @@
-# Docker & Deployment
-
-We provide multi-stage Dockerfiles to make deployment as easy as possible.
+# Docker Deployment Guide provide multi-stage Dockerfiles to make deployment as easy as possible.
 
 ## Traefik (Default)
 
@@ -30,4 +28,4 @@ docker-compose -f docker-compose.nginx.yml up -d
 
 ## Authentication
 
-When running the main `Dockerfile`, the app is served via a lightweight Node.js Express server. This allows you to optionally enable authentication. Set `VITE_REQUIRE_AUTH=true` in `.env` to enforce a login page.
+When running the main `Dockerfile`, the app is served via a lightweight Node.js Express server. This allows you to optionally enable authentication. Set `REQUIRE_AUTH=true` in `.env` to enforce a login page.

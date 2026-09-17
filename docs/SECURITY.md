@@ -1,4 +1,4 @@
-# Security Hardening
+# Security Guidelines
 
 ## Client-Side Credentials
 
@@ -12,7 +12,7 @@ We have introduced an optional hybrid backend that forces users to log in before
 
 Enable this by setting:
 ```bash
-VITE_REQUIRE_AUTH=true
+REQUIRE_AUTH=true
 AUTH_USERNAME=your_username
 AUTH_PASSWORD_HASH=$argon2id$v=19$m=65536,t=3,p=4$......
 ```

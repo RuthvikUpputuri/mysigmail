@@ -4,7 +4,7 @@ import type { Template } from './templates'
 
 import { useTemplateData } from './templates'
 
-const cdnUrl = import.meta.env.VITE_CDN_URL
+const cdnUrl = import.meta.env.CDN_URL
 
 export interface Preset extends Template {
   presetName: string

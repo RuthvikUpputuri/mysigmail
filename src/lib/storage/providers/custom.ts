@@ -4,11 +4,11 @@ export class CustomHttpProvider implements StorageProvider {
   name = 'custom'
 
   isConfigured(): boolean {
-    return !!import.meta.env.VITE_CUSTOM_UPLOAD_URL
+    return !!import.meta.env.CUSTOM_UPLOAD_URL
   }
 
   async upload(file: File, _options?: UploadOptions): Promise<string> {
-    const uploadUrl = import.meta.env.VITE_CUSTOM_UPLOAD_URL
+    const uploadUrl = import.meta.env.CUSTOM_UPLOAD_URL
     if (!uploadUrl) {
       throw new Error('Custom upload URL is not configured.')
     }
@@ -20,11 +20,11 @@ export class CustomHttpProvider implements StorageProvider {
     // We append the file directly.
 
     let customHeaders = {}
-    if (import.meta.env.VITE_CUSTOM_UPLOAD_HEADERS) {
+    if (import.meta.env.CUSTOM_UPLOAD_HEADERS) {
       try {
-        customHeaders = JSON.parse(import.meta.env.VITE_CUSTOM_UPLOAD_HEADERS)
+        customHeaders = JSON.parse(import.meta.env.CUSTOM_UPLOAD_HEADERS)
       } catch (err) {
-        console.error('Failed to parse VITE_CUSTOM_UPLOAD_HEADERS', err)
+        console.error('Failed to parse CUSTOM_UPLOAD_HEADERS', err)
       }
     }
 

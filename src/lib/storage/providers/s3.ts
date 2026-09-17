@@ -10,13 +10,13 @@ export class GenericS3Provider implements StorageProvider {
     this.name = name
     if (this.isConfigured()) {
       try {
-        const endpoint = import.meta.env.VITE_S3_ENDPOINT
+        const endpoint = import.meta.env.S3_ENDPOINT
         this.s3Client = new S3Client({
-          region: import.meta.env.VITE_S3_REGION || 'auto',
+          region: import.meta.env.S3_REGION || 'auto',
           endpoint: endpoint ? endpoint : undefined,
           credentials: {
-            accessKeyId: import.meta.env.VITE_S3_ACCESS_KEY_ID,
-            secretAccessKey: import.meta.env.VITE_S3_SECRET_ACCESS_KEY,
+            accessKeyId: import.meta.env.S3_ACCESS_KEY_ID,
+            secretAccessKey: import.meta.env.S3_SECRET_ACCESS_KEY,
           },
           // Important for S3-compatible endpoints like MinIO, DO, etc.
           forcePathStyle: true,
@@ -29,9 +29,9 @@ export class GenericS3Provider implements StorageProvider {
 
   isConfigured(): boolean {
     return !!(
-      import.meta.env.VITE_S3_BUCKET &&
-      import.meta.env.VITE_S3_ACCESS_KEY_ID &&
-      import.meta.env.VITE_S3_SECRET_ACCESS_KEY
+      import.meta.env.S3_BUCKET &&
+      import.meta.env.S3_ACCESS_KEY_ID &&
+      import.meta.env.S3_SECRET_ACCESS_KEY
     )
   }
 
@@ -41,7 +41,7 @@ export class GenericS3Provider implements StorageProvider {
     }
 
     const key = `signature/upload/${Date.now()}-${file.name}`
-    const bucket = import.meta.env.VITE_S3_BUCKET
+    const bucket = import.meta.env.S3_BUCKET
 
     const upload = new Upload({
       client: this.s3Client,
@@ -56,17 +56,17 @@ export class GenericS3Provider implements StorageProvider {
 
     await upload.done()
 
-    const publicUrl = import.meta.env.VITE_S3_PUBLIC_URL
+    const publicUrl = import.meta.env.S3_PUBLIC_URL
     if (publicUrl) {
       return `${publicUrl.replace(/\/$/, '')}/${key}`
     }
 
-    const endpoint = import.meta.env.VITE_S3_ENDPOINT
+    const endpoint = import.meta.env.S3_ENDPOINT
     if (endpoint) {
       return `${endpoint.replace(/\/$/, '')}/${bucket}/${key}`
     }
 
     // Fallback if no public URL and no endpoint is defined but it's S3
-    return `https://${bucket}.s3.${import.meta.env.VITE_S3_REGION}.amazonaws.com/${key}`
+    return `https://${bucket}.s3.${import.meta.env.S3_REGION}.amazonaws.com/${key}`
   }
 }

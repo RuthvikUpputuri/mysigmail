@@ -10,10 +10,10 @@ export class AwsS3Provider implements StorageProvider {
     if (this.isConfigured()) {
       try {
         this.s3Client = new S3Client({
-          region: import.meta.env.VITE_AWS_S3_REGION,
+          region: import.meta.env.AWS_S3_REGION,
           credentials: {
-            accessKeyId: import.meta.env.VITE_AWS_S3_ID,
-            secretAccessKey: import.meta.env.VITE_AWS_S3_KEY,
+            accessKeyId: import.meta.env.AWS_S3_ID,
+            secretAccessKey: import.meta.env.AWS_S3_KEY,
           },
         })
       } catch (err) {
@@ -24,11 +24,11 @@ export class AwsS3Provider implements StorageProvider {
 
   isConfigured(): boolean {
     return !!(
-      import.meta.env.VITE_AWS_S3_URL &&
-      import.meta.env.VITE_AWS_S3_BASKET &&
-      import.meta.env.VITE_AWS_S3_ID &&
-      import.meta.env.VITE_AWS_S3_KEY &&
-      import.meta.env.VITE_AWS_S3_REGION
+      import.meta.env.AWS_S3_URL &&
+      import.meta.env.AWS_S3_BASKET &&
+      import.meta.env.AWS_S3_ID &&
+      import.meta.env.AWS_S3_KEY &&
+      import.meta.env.AWS_S3_REGION
     )
   }
 
@@ -42,7 +42,7 @@ export class AwsS3Provider implements StorageProvider {
     const upload = new Upload({
       client: this.s3Client,
       params: {
-        Bucket: import.meta.env.VITE_AWS_S3_BASKET,
+        Bucket: import.meta.env.AWS_S3_BASKET,
         Key: key,
         Body: file,
         ContentType: options?.contentType || file.type,
@@ -52,7 +52,7 @@ export class AwsS3Provider implements StorageProvider {
 
     await upload.done()
 
-    const cdnUrl = import.meta.env.VITE_AWS_S3_URL
+    const cdnUrl = import.meta.env.AWS_S3_URL
     return `${cdnUrl}/${key}`
   }
 }

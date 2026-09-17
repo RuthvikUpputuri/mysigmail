@@ -14,10 +14,19 @@ const __dirname = path.dirname(__filename)
 const app = express()
 const PORT = process.env.PORT || 3000
 
-// We assume the VITE_REQUIRE_AUTH is used to enable auth
-const requireAuth = process.env.VITE_REQUIRE_AUTH === 'true'
-const adminUser = process.env.AUTH_USERNAME || 'admin'
-const adminPassHash = process.env.AUTH_PASSWORD_HASH // Should be generated with argon2
+// We assume the REQUIRE_AUTH is used to enable auth
+const requireAuth = process.env.REQUIRE_AUTH === 'true'
+const adminUser = process.env.ADMIN_USERNAME || 'admin'
+let adminPassHash = process.env.ADMIN_PASSWORD_HASH || null;
+
+if (!adminPassHash && process.env.ADMIN_PASSWORD) {
+  // Hash the password on startup so we only keep the hash in memory for verification
+  argon2.hash(process.env.ADMIN_PASSWORD).then(hash => {
+    adminPassHash = hash
+  }).catch(err => {
+    console.error('Failed to hash admin password on startup', err)
+  })
+}
 
 app.use(express.json())
 app.use(cookieParser())
@@ -32,16 +41,18 @@ app.use((req, res, next) => {
   next()
 })
 
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'fallback-secret-for-development-only',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
-  }
-}))
+if (requireAuth) {
+  app.use(session({
+    secret: process.env.SESSION_SECRET || 'fallback-secret-for-development-only',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
+  }))
+}
 
 // Auth middleware
 const authMiddleware = (req, res, next) => {
@@ -83,7 +94,7 @@ app.post('/api/login', async (req, res) => {
   }
 
   if (!adminPassHash) {
-    console.error('AUTH_PASSWORD_HASH is not set in environment.')
+    console.error('ADMIN_PASSWORD is not set in environment or hashing failed.')
     return res.status(500).json({ error: 'Server misconfiguration' })
   }
 
@@ -102,7 +113,9 @@ app.post('/api/login', async (req, res) => {
 
 // Logout API
 app.post('/api/logout', (req, res) => {
-  req.session.destroy()
+  if (req.session) {
+    req.session.destroy()
+  }
   res.json({ success: true })
 })
 

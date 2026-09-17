@@ -22,7 +22,7 @@ export default defineConfig({
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     env: {
-      VITE_REQUIRE_AUTH: 'false'
+      REQUIRE_AUTH: 'false'
     }
   }
 })

@@ -9,6 +9,7 @@ import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  envPrefix: ['REQUIRE_AUTH', 'STORAGE_', 'AWS_', 'S3_', 'R2_', 'SUPABASE_', 'CUSTOM_'],
   plugins: [
     vue(),
     tailwindcss(),

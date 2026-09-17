@@ -55,7 +55,7 @@ export const router = createRouter({
 })
 
 router.beforeEach(async (to, _from, next) => {
-  const requireAuth = import.meta.env.VITE_REQUIRE_AUTH === 'true'
+  const requireAuth = import.meta.env.REQUIRE_AUTH === 'true'
   
   if (requireAuth && to.path !== '/login') {
     try {

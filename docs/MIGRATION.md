@@ -18,16 +18,16 @@ MySigMail stores the user's customized signatures entirely in the browser's `loc
 If you previously hard-coded AWS S3 credentials in your `.env` for the Vite build:
 
 1. Copy `.env.example` to `.env` in the new repository.
-2. Set `VITE_STORAGE_PROVIDER=aws`.
-3. Move your `VITE_AWS_S3_*` variables over.
+2. Set `STORAGE_PROVIDER=aws`.
+3. Move your `AWS_S3_*` variables over.
 
-If you want to move away from AWS S3, you can easily switch `VITE_STORAGE_PROVIDER` to `r2`, `minio`, `supabase`, etc.
+If you want to move away from AWS S3, you can easily switch `STORAGE_PROVIDER` to `r2`, `minio`, `supabase`, etc.
 
 ## Authentication
 
-Authentication is a new feature in v2.0. If you do not set `VITE_REQUIRE_AUTH=true`, the application will behave exactly as the public MySigMail (anyone who accesses the domain can create signatures).
+Authentication is a new feature in v2.0. If you do not set `REQUIRE_AUTH=true`, the application will behave exactly as the public MySigMail (anyone who accesses the domain can create signatures).
 
 If you want to secure your self-hosted instance so only you can use it:
-1. Set `VITE_REQUIRE_AUTH=true`.
+1. Set `REQUIRE_AUTH=true`.
 2. Generate an Argon2 password hash.
 3. Provide `AUTH_USERNAME` and `AUTH_PASSWORD_HASH` in your `.env` file.

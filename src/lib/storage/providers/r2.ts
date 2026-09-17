@@ -9,13 +9,13 @@ export class R2Provider implements StorageProvider {
   constructor() {
     if (this.isConfigured()) {
       try {
-        const accountId = import.meta.env.VITE_R2_ACCOUNT_ID
+        const accountId = import.meta.env.R2_ACCOUNT_ID
         this.s3Client = new S3Client({
           region: 'auto',
           endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
           credentials: {
-            accessKeyId: import.meta.env.VITE_R2_ACCESS_KEY_ID,
-            secretAccessKey: import.meta.env.VITE_R2_SECRET_ACCESS_KEY,
+            accessKeyId: import.meta.env.R2_ACCESS_KEY_ID,
+            secretAccessKey: import.meta.env.R2_SECRET_ACCESS_KEY,
           },
         })
       } catch (err) {
@@ -26,10 +26,10 @@ export class R2Provider implements StorageProvider {
 
   isConfigured(): boolean {
     return !!(
-      import.meta.env.VITE_R2_ACCOUNT_ID &&
-      import.meta.env.VITE_R2_BUCKET &&
-      import.meta.env.VITE_R2_ACCESS_KEY_ID &&
-      import.meta.env.VITE_R2_SECRET_ACCESS_KEY
+      import.meta.env.R2_ACCOUNT_ID &&
+      import.meta.env.R2_BUCKET &&
+      import.meta.env.R2_ACCESS_KEY_ID &&
+      import.meta.env.R2_SECRET_ACCESS_KEY
     )
   }
 
@@ -39,7 +39,7 @@ export class R2Provider implements StorageProvider {
     }
 
     const key = `signature/upload/${Date.now()}-${file.name}`
-    const bucket = import.meta.env.VITE_R2_BUCKET
+    const bucket = import.meta.env.R2_BUCKET
 
     const upload = new Upload({
       client: this.s3Client,
@@ -53,11 +53,11 @@ export class R2Provider implements StorageProvider {
 
     await upload.done()
 
-    const publicUrl = import.meta.env.VITE_R2_PUBLIC_URL
+    const publicUrl = import.meta.env.R2_PUBLIC_URL
     if (publicUrl) {
       return `${publicUrl.replace(/\/$/, '')}/${key}`
     }
     
-    throw new Error('Upload succeeded, but VITE_R2_PUBLIC_URL is not set so cannot return public image URL.')
+    throw new Error('Upload succeeded, but R2_PUBLIC_URL is not set so cannot return public image URL.')
   }
 }
