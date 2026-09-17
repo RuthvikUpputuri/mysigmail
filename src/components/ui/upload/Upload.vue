@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { AcceptableValue } from 'reka-ui'
 
-import { getStorageProvider } from '@/lib/storage'
 import 'cropperjs/dist/cropper.css'
 import Cropper from 'cropperjs'
 
@@ -24,8 +23,6 @@ interface Emits {
 }
 
 const { sonner } = useSonner()
-
-const storageProvider = getStorageProvider()
 
 let cropper: Cropper | null = null
 
@@ -66,9 +63,7 @@ const aspectRatios = [
   },
 ]
 
-const isUploadAvailable = computed(() => {
-  return storageProvider.isConfigured()
-})
+const isUploadAvailable = computed(() => true)
 
 const cropPreview = computed(() => {
   if (!file.value)
@@ -137,8 +132,20 @@ async function uploadImage() {
   const blob = await getCroppedImage()
 
   try {
-    const fileToUpload = new File([blob], file.value.name, { type: file.value.type })
-    const url = await storageProvider.upload(fileToUpload, { contentType: file.value.type })
+    const formData = new FormData()
+    formData.append('file', blob, file.value.name)
+
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData,
+    })
+
+    if (!response.ok) {
+      throw new Error(`Upload failed: ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    const url = data.url || data.publicUrl
 
     emit('uploaded', url)
 

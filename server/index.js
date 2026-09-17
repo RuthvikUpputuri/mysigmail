@@ -119,6 +119,29 @@ app.post('/api/logout', (req, res) => {
   res.json({ success: true })
 })
 
+import multer from 'multer'
+import { uploadFile } from './storage.js'
+
+const upload = multer({ 
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+})
+
+// Upload API
+app.post('/api/upload', upload.single('file'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' })
+  }
+
+  try {
+    const url = await uploadFile(req.file.buffer, req.file.originalname, req.file.mimetype)
+    res.json({ url })
+  } catch (err) {
+    console.error('Upload error:', err)
+    res.status(500).json({ error: 'Failed to upload image' })
+  }
+})
+
 // Serve static files from dist directory
 const distPath = path.join(__dirname, '../dist')
 app.use(express.static(distPath))
