@@ -1,0 +1,113 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        package-manager: [npm, pnpm, yarn, bun]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        if: matrix.package-manager != 'bun'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup Bun
+        if: matrix.package-manager == 'bun'
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Setup pnpm
+        if: matrix.package-manager == 'pnpm'
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8
+
+      - name: Install dependencies (npm)
+        if: matrix.package-manager == 'npm'
+        run: npm ci
+
+      - name: Install dependencies (pnpm)
+        if: matrix.package-manager == 'pnpm'
+        run: pnpm install --frozen-lockfile
+
+      - name: Install dependencies (yarn)
+        if: matrix.package-manager == 'yarn'
+        run: yarn install --frozen-lockfile
+
+      - name: Install dependencies (bun)
+        if: matrix.package-manager == 'bun'
+        run: bun install --frozen-lockfile
+
+      - name: Lint
+        run: |
+          if [ "${{ matrix.package-manager }}" = "npm" ]; then
+            npm run lint
+          elif [ "${{ matrix.package-manager }}" = "pnpm" ]; then
+            pnpm run lint
+          elif [ "${{ matrix.package-manager }}" = "yarn" ]; then
+            yarn run lint
+          else
+            bun run lint
+          fi
+
+      - name: Build
+        run: |
+          if [ "${{ matrix.package-manager }}" = "npm" ]; then
+            npm run build
+          elif [ "${{ matrix.package-manager }}" = "pnpm" ]; then
+            pnpm run build
+          elif [ "${{ matrix.package-manager }}" = "yarn" ]; then
+            yarn run build
+          else
+            bun run build
+          fi
+
+      - name: Run Unit Tests
+        run: |
+          if [ "${{ matrix.package-manager }}" = "npm" ]; then
+            npm run test:unit
+          elif [ "${{ matrix.package-manager }}" = "pnpm" ]; then
+            pnpm run test:unit
+          elif [ "${{ matrix.package-manager }}" = "yarn" ]; then
+            yarn run test:unit
+          else
+            bun run test:unit
+          fi
+
+      - name: Install Playwright Browsers
+        if: matrix.package-manager == 'npm'
+        run: npx playwright install --with-deps
+
+      - name: Run E2E Tests
+        if: matrix.package-manager == 'npm'
+        run: npm run test:e2e
+
+  docker:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/Dockerfile
+          push: false
+          tags: mysigmail:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

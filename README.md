@@ -2,15 +2,15 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset=".github/logo-white.png">
     <source media="(prefers-color-scheme: light)" srcset=".github/logo-black.png">
-    <img src=".github/logo-black.png" width="100" alt="MySigMail Logo" />
+    <img src=".github/logo-black.png" width="100" alt="EmailSign Logo" />
   </picture>
 </p>
 
 <p align="center">
-  <img src=".github/hero.png" width="500" alt="MySigMail - Email Signature Generator" />
+  <img src=".github/hero.png" width="500" alt="EmailSign - Email Signature Generator" />
 </p>
 
-<h1 align="center">MySigMail</h1>
+<h1 align="center">EmailSign (formerly MySigMail Self-Host)</h1>
 <p align="center">
   <strong>An open-source email signature generator for Gmail, Outlook, Apple Mail, etc.</strong>
   <br>
@@ -18,90 +18,134 @@
 </p>
 
 <p align="center">
-  <img alt="GitHub package.json version" src="https://img.shields.io/github/package-json/v/antonreshetov/mysigmail">
-  <img alt="GitHub" src="https://img.shields.io/github/license/antonreshetov/mysigmail">
+  <em>This project is a self-hosted fork of the original <a href="https://github.com/antonreshetov/mysigmail">MySigMail</a> project.</em>
 </p>
 
-<p align="center" >
-  <a href="https://www.producthunt.com/posts/mysigmail-2" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=142330&theme=dark&period=daily" alt="MySigMail - UI email signature generator on GitHub | Product Hunt Embed" style="width: 200px;" /></a>
-</p>
+---
 
 ## About
 Creating an email signature is not a trivial task, especially for non-technical people.
 Most existing solutions are either paid or closed-source.
 
-**MySigMail** makes it easy, free, and open-source.
+**EmailSign** makes it easy, free, open-source, and natively self-hostable.
 Let’s make creating professional signatures accessible for everyone!
 
 ## Features
-- **Customization** – fonts, colors, avatar shapes, social icons, custom fields
-- **Templates** – ready-to-use layouts for quick start
-- **Add-ons** – disclaimer, call-to-action, and more
+- **Customization** – fonts, colors, avatar shapes, social icons, custom fields.
+- **Templates** – ready-to-use layouts for quick start.
+- **Add-ons** – disclaimer, call-to-action, and more.
+- **Multi Package Manager Support** – works seamlessly with `npm`, `pnpm`, `yarn`, and `bun`.
+- **Pluggable Storage** – extensive support for Cloudflare R2, AWS S3, Supabase, MinIO, DO Spaces, or local Base64 fallback.
+- **Docker-First Architecture** – effortlessly deploy using included Nginx, Caddy, or Traefik configurations.
 
-## Development
+---
 
-### Prerequisites
+## Self-Hosting Guide
 
-The project uses Bun for building and running. Please make sure you have [Bun](https://bun.sh/) installed.
-
-### Quick Start
-
-```bash
-git clone https://github.com/antonreshetov/mysigmail
-cd mysigmail
-bun install
-bun run dev
-```
-
-### Set env variables
-If you want to test image upload functionality, you need to set AWS S3 credentials.
-
-Create a `.env` file in the root directory and add the following variables:
+### 1. Docker Deployment (Recommended)
+This repository includes a multi-stage Docker build optimized for production. I provided sample pre-configured docker-compose files for your favorite (caddy/traefik/nginx) reverse proxy.
 
 ```bash
-VITE_AWS_S3_URL=
-VITE_AWS_S3_BASKET=
-VITE_AWS_S3_ID=
-VITE_AWS_S3_KEY=
-VITE_AWS_S3_REGION=
+git clone https://github.com/your-org/emailsign
+cd emailsign
+
+# For Traefik (Default)
+docker compose -f docker/docker-compose.yml up -d
+
+# For Caddy (Automatic HTTPS)
+docker compose -f docker/docker-compose.caddy.yml up -d
+
+# For Nginx
+docker compose -f docker/docker-compose.nginx.yml up -d
 ```
 
-## SaaS Version
+For advanced details regarding Docker and reverse proxy setups, please read our [Docker Deployment Guide](docs/DOCKER.md).
+
+### 2. Manual Installation (Node.js)
+
+You can run this project locally using your preferred package manager (Node.js >= 20 is recommended).
+
+```bash
+# Clone the repository
+git clone https://github.com/your-org/emailsign
+cd emailsign
+
+# Install dependencies using npm, pnpm, yarn, or bun
+npm install   # OR pnpm install / yarn install / bun install
+
+# Start the development server
+npm run dev
+
+# Build for production
+npm run build
+```
+
+---
+
+## Configuration & Storage
+
+Copy the `.env.example` file to `.env` and configure it according to your needs:
+```bash
+cp .env.example .env
+```
+
+**Authentication (Optional)**:
+If you are running the project using the Node.js backend instead of just the static files, you can require users to log in before using the editor:
+```env
+VITE_REQUIRE_AUTH=true
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=change_me_to_a_strong_password
+```
+
+**Storage Providers**:
+EmailSign supports saving uploaded images directly to the cloud without requiring a backend. You can use:
+- `s3` (AWS S3)
+- `r2` (Cloudflare R2)
+- `supabase`
+- `minio` / `do` / `b2` / `wasabi`
+- `none` (Fallback to Base64 encoding - images are embedded directly into the HTML)
+
+For full details on configuring these storage providers securely, please see the [Storage Configuration Guide](docs/STORAGE.md).
+
+---
+
+## Security & Architecture
+- All credentials should be provided via `.env` or Docker secrets.
+- **Client-Side First**: The visual signature editor and rendering are completely client-side.
+- If you are deploying securely to the public internet, ensure you are utilizing the provided Traefik or Caddy TLS configurations and keeping API endpoints locked down. Read our [Security Guidelines](docs/SECURITY.md) for more details.
+
+---
+
+## Original MySigMail SaaS Version
 Don’t want to deal with setup and running locally?
 
-Use the **[MySigMail](https://mysigmail.com)** – a production-ready version of app, hosted and packed with extra features.
+Use the original **[MySigMail](https://mysigmail.com)** – a production-ready SaaS version hosted and packed with extra features.
 
-### Key Features
-- **Manage multiple signatures** – create, save, and switch between multiple signatures effortlessly, all stored safely on our servers
-- **Shared signatures** – share ready-to-use signatures that your teammates can copy and install
-- **Analytics** – track clicks and engagement from your email signature
-- **Presets library** – professionally designed signature styles you can apply in one click
-- **Image hosting** – reliable CDN hosting for logos, banners, and photos
-
-### Tools
-Extend your signatures with powerful marketing and branding tools:
-
-- **Sign Off** – create a handwritten signature and add it as a personal sign-off to your email signature
-- **URL Builder** – generate UTM-tagged URLs and seamlessly track your campaigns in Google Analytics
-- **Banner Maker** *(coming soon)* – design and add eye-catching banners to promote events, offers, or announcements directly in your email signature
+### Key SaaS Features
+- **Manage multiple signatures** – create, save, and switch between multiple signatures effortlessly, all stored safely on their servers.
+- **Shared signatures** – share ready-to-use signatures that your teammates can copy and install.
+- **Analytics** – track clicks and engagement from your email signature.
+- **Presets library** – professionally designed signature styles you can apply in one click.
+- **Image hosting** – reliable CDN hosting for logos, banners, and photos.
 
 Check out **[MySigMail](https://mysigmail.com)** and start creating professional email signatures in seconds.
 
+---
+
 ## Contribution Policy
 
-MySigMail is an open-source project but only accepting contributions for bug fixes. To get started, please read [CONTRIBUTING.md](https://github.com/antonreshetov/mysigmail/blob/master/CONTRIBUTING.md) for more details.
+This specific fork is actively maintained. Please feel free to open PRs for bug fixes, new storage providers, or core enhancements. 
 
-## Follow
- - News and updates on [X](https://x.com/mysigmail).
- - [Discussions](https://github.com/antonreshetov/mysigmail/discussions).
+For the upstream repository's contribution policy, please read [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-This project is licensed under the [AGPL-3.0](https://github.com/antonreshetov/mysigmail/blob/master/LICENSE).
+This project is licensed under the **AGPL-3.0 License**.
+See the [LICENSE](LICENSE) file for more details.
 
 ## Commercial Use
 
-For commercial use, please contact me for a commercial license at reshetov.art@gmail.com.
+For commercial use inquiries regarding the original MySigMail codebase, please contact the original author for a commercial license at reshetov.art@gmail.com.
 
 By using this software, you agree to the terms of the license.
 

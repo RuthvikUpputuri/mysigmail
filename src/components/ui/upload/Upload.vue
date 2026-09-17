@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import type { AcceptableValue } from 'reka-ui'
 
-import { S3Client } from '@aws-sdk/client-s3'
-import { Upload } from '@aws-sdk/lib-storage'
+import { getStorageProvider } from '@/lib/storage'
 import 'cropperjs/dist/cropper.css'
 import Cropper from 'cropperjs'
 
@@ -26,21 +25,7 @@ interface Emits {
 
 const { sonner } = useSonner()
 
-let s3Client: S3Client
-
-try {
-  s3Client = new S3Client({
-    region: import.meta.env.VITE_AWS_S3_REGION,
-    credentials: {
-      accessKeyId: import.meta.env.VITE_AWS_S3_ID,
-      secretAccessKey: import.meta.env.VITE_AWS_S3_KEY,
-    },
-  })
-}
-catch (err) {
-  console.error('Missing some of the AWS S3 credentials')
-  console.error(err)
-}
+const storageProvider = getStorageProvider()
 
 let cropper: Cropper | null = null
 
@@ -82,13 +67,7 @@ const aspectRatios = [
 ]
 
 const isUploadAvailable = computed(() => {
-  return (
-    !!import.meta.env.VITE_AWS_S3_URL
-    && !!import.meta.env.VITE_AWS_S3_BASKET
-    && !!import.meta.env.VITE_AWS_S3_ID
-    && !!import.meta.env.VITE_AWS_S3_KEY
-    && !!import.meta.env.VITE_AWS_S3_REGION
-  )
+  return storageProvider.isConfigured()
 })
 
 const cropPreview = computed(() => {
@@ -158,23 +137,10 @@ async function uploadImage() {
   const blob = await getCroppedImage()
 
   try {
-    const key = `signature/upload/${Date.now()}-${file.value.name}`
+    const fileToUpload = new File([blob], file.value.name, { type: file.value.type })
+    const url = await storageProvider.upload(fileToUpload, { contentType: file.value.type })
 
-    const upload = new Upload({
-      client: s3Client,
-      params: {
-        Bucket: import.meta.env.VITE_AWS_S3_BASKET,
-        Key: key,
-        Body: blob,
-        ContentType: file.value.type,
-        ACL: 'public-read',
-      },
-    })
-
-    await upload.done()
-
-    const cdnUrl = import.meta.env.VITE_AWS_S3_URL
-    emit('uploaded', `${cdnUrl}/${key}`)
+    emit('uploaded', url)
 
     openDialog.value = false
     sonner({

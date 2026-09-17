@@ -37,6 +37,13 @@ const routes = [
     },
   },
   {
+    path: '/login',
+    component: () => import('@/views/Login.vue'),
+    meta: {
+      title: 'Login',
+    },
+  },
+  {
     path: '/:pathMatch(.*)*',
     redirect: '/basic',
   },
@@ -45,4 +52,25 @@ const routes = [
 export const router = createRouter({
   history: createWebHistory(),
   routes,
+})
+
+router.beforeEach(async (to, _from, next) => {
+  const requireAuth = import.meta.env.VITE_REQUIRE_AUTH === 'true'
+  
+  if (requireAuth && to.path !== '/login') {
+    try {
+      const res = await fetch('/api/auth/status')
+      if (res.ok) {
+        const data = await res.json()
+        if (data.requireAuth && !data.isAuthenticated) {
+          return next('/login')
+        }
+      }
+    } catch (err) {
+      console.error('Failed to check auth status', err)
+      return next('/login')
+    }
+  }
+  
+  next()
 })

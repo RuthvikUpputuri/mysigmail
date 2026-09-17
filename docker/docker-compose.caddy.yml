@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.caddy
+    image: mysigmail-static-caddy:latest
+    container_name: mysigmail-app-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+      # Mount custom Caddyfile if you need domain/HTTPS config
+      # - ./deploy/caddy/Caddyfile:/etc/caddy/Caddyfile
+
+volumes:
+  caddy_data:
+  caddy_config:
