@@ -2,7 +2,7 @@
 
 ## Client-Side Credentials
 
-**WARNING**: This application is a Single Page Application (SPA). If you provide storage credentials (like AWS keys, R2 keys) in your `.env` file, they *will* be bundled into the client-side JavaScript. 
+**WARNING**: This application is a Single Page Application (SPA). If you provide storage credentials (like AWS keys, R2 keys) in your `.env` file, they *will* be bundled into the client-side JavaScript.
 
 This approach is only suitable if you are hosting the tool internally on a private network, or if you use the authentication feature to prevent unauthorized access.
 

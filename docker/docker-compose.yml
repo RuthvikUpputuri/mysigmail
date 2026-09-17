@@ -5,36 +5,36 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    image: mysigmail-selfhost:latest
-    container_name: mysigmail-app
+    image: emailsign:latest
+    container_name: emailsign
     restart: unless-stopped
     env_file:
       - .env
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.mysigmail.rule=Host(`mysigmail.localhost`)" # Change this to your domain
-      - "traefik.http.routers.mysigmail.entrypoints=web"
+      - traefik.enable=true
+      - traefik.http.routers.emailsign.rule=Host(`mysigmail.localhost`) # Change this to your domain
+      - traefik.http.routers.emailsign.entrypoints=web
       # If using HTTPS:
-      # - "traefik.http.routers.mysigmail.entrypoints=websecure"
-      # - "traefik.http.routers.mysigmail.tls.certresolver=myresolver"
-      - "traefik.http.services.mysigmail.loadbalancer.server.port=3000"
+      # - "traefik.http.routers.emailsign.entrypoints=websecure"
+      # - "traefik.http.routers.emailsign.tls.certresolver=myresolver"
+      - traefik.http.services.emailsign.loadbalancer.server.port=3000
 
   traefik:
-    image: "traefik:v3.0"
-    container_name: "traefik"
+    image: 'traefik:v3.0'
+    container_name: traefik
     command:
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - '--entrypoints.web.address=:80'
       # - "--entrypoints.websecure.address=:443"
       # - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
       # - "--certificatesresolvers.myresolver.acme.email=your-email@example.com"
       # - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
     ports:
-      - "80:80"
-      - "443:443"
+      - '80:80'
+      - '443:443'
       # - "8080:8080" # Web UI (enabled by --api.insecure=true)
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "./deploy/traefik/letsencrypt:/letsencrypt"
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+      - './deploy/traefik/letsencrypt:/letsencrypt'

@@ -11,7 +11,7 @@ const open = ref(false)
       <div class="w-[var(--sidebar-width)]">
         <img
           src="/logo.svg"
-          alt="MySigMail"
+          alt="EmailSign"
           class="w-[59px] dark:invert"
         >
       </div>
@@ -20,7 +20,7 @@ const open = ref(false)
       <UiDialog v-model:open="open">
         <UiDialogTrigger>
           <UiButton variant="link">
-            Support MySigMail
+            Support EmailSign
           </UiButton>
         </UiDialogTrigger>
         <UiDialogContent>
@@ -28,7 +28,7 @@ const open = ref(false)
             <UiDialogTitle>Made with ❤️, Powered by You</UiDialogTitle>
           </UiDialogHeader>
           <UiDialogDescription>
-            MySigMail is built and maintained with love as an open-source project. If you find it
+            EmailSign is built and maintained with love as an open-source project. If you find it
             useful, consider supporting us — your contribution helps us keep improving and building
             new features for the community.
           </UiDialogDescription>

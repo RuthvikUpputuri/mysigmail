@@ -37,6 +37,15 @@ const routes = [
     },
   },
   {
+    path: '/faq',
+    name: 'faq',
+    component: () => import('@/views/Faq.vue'),
+    meta: {
+      title: 'FAQ',
+      description: 'Signature installs, tips and issues',
+    },
+  },
+  {
     path: '/login',
     component: () => import('@/views/Login.vue'),
     meta: {
@@ -55,22 +64,23 @@ export const router = createRouter({
 })
 
 router.beforeEach(async (to, _from, next) => {
-  const requireAuth = import.meta.env.REQUIRE_AUTH === 'true'
-  
-  if (requireAuth && to.path !== '/login') {
-    try {
-      const res = await fetch('/api/auth/status')
-      if (res.ok) {
-        const data = await res.json()
-        if (data.requireAuth && !data.isAuthenticated) {
+  try {
+    const res = await fetch('/api/auth/status')
+    if (res.ok) {
+      const data = await res.json()
+      if (data.requireAuth) {
+        if (!data.isAuthenticated && to.path !== '/login') {
           return next('/login')
         }
+        if (data.isAuthenticated && to.path === '/login') {
+          return next('/')
+        }
       }
-    } catch (err) {
-      console.error('Failed to check auth status', err)
-      return next('/login')
     }
   }
-  
+  catch (err) {
+    console.error('Failed to check auth status', err)
+  }
+
   next()
 })

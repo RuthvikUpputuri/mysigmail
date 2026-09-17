@@ -148,7 +148,7 @@ Check out **[MySigMail](https://mysigmail.com)** and start creating professional
 
 ## Contribution Policy
 
-This specific fork is actively maintained. Please feel free to open PRs for bug fixes, new storage providers, or core enhancements. 
+This specific fork is actively maintained. Please feel free to open PRs for bug fixes, new storage providers, or core enhancements.
 
 For the upstream repository's contribution policy, please read [CONTRIBUTING.md](CONTRIBUTING.md).
 

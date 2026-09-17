@@ -1,5 +1,5 @@
 {
-  "name": "mysigmail",
+  "name": "emailsign",
   "type": "module",
   "version": "2.0.0",
   "private": true,
@@ -75,6 +75,13 @@
     "vitest": "^4.1.11",
     "vue-tsc": "^2.2.12"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "simple-git-hooks",
+      "vue-demi"
+    ]
+  },
   "simple-git-hooks": {
     "pre-commit": "npx lint-staged",
     "commit-msg": "npx commitlint --edit $1"
@@ -83,13 +90,6 @@
     "*.{js,ts,vue}": [
       "prettier --write",
       "eslint --fix"
-    ]
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "simple-git-hooks",
-      "vue-demi"
     ]
   }
 }

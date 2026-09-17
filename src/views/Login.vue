@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+
 import { useSonner } from '@/composables/useSonner'
 
 const router = useRouter()
@@ -21,19 +22,22 @@ async function handleLogin() {
     const res = await fetch('/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: username.value, password: password.value })
+      body: JSON.stringify({ username: username.value, password: password.value }),
     })
 
     if (res.ok) {
       sonner({ title: 'Success', description: 'Logged in successfully', type: 'success' })
       router.push('/')
-    } else {
+    }
+    else {
       sonner({ title: 'Error', description: 'Invalid credentials', type: 'error' })
     }
-  } catch (err) {
+  }
+  catch (err) {
     console.error(err)
     sonner({ title: 'Error', description: 'Server error. Please try again later.', type: 'error' })
-  } finally {
+  }
+  finally {
     isLoading.value = false
   }
 }
@@ -44,16 +48,22 @@ async function handleLogin() {
     <div class="w-full max-w-md space-y-8 bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
       <div class="text-center">
         <h2 class="mt-6 text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
-          Sign in to MySigMail
+          Sign in to EmailSign
         </h2>
         <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
           This instance is private and requires authentication.
         </p>
       </div>
-      <form class="mt-8 space-y-6" @submit.prevent="handleLogin">
+      <form
+        class="mt-8 space-y-6"
+        @submit.prevent="handleLogin"
+      >
         <div class="-space-y-px rounded-md shadow-sm">
           <div>
-            <label for="username" class="sr-only">Username</label>
+            <label
+              for="username"
+              class="sr-only"
+            >Username</label>
             <input
               id="username"
               v-model="username"
@@ -65,7 +75,10 @@ async function handleLogin() {
             >
           </div>
           <div>
-            <label for="password" class="sr-only">Password</label>
+            <label
+              for="password"
+              class="sr-only"
+            >Password</label>
             <input
               id="password"
               v-model="password"

@@ -1,6 +1,7 @@
 import UilBrushAlt from '~icons/uil/brush-alt'
 import UilCreateDashboard from '~icons/uil/create-dashboard'
 import UilPostcard from '~icons/uil/postcard'
+import UilQuestionCircle from '~icons/uil/question-circle'
 import UilTwitterAlt from '~icons/uil/twitter-alt'
 import UilUserCircle from '~icons/uil/user-circle'
 
@@ -29,5 +30,13 @@ export const main = [
     name: 'Templates',
     path: '/templates',
     icon: UilPostcard,
+  },
+]
+
+export const bottom = [
+  {
+    name: 'FAQ',
+    path: '/faq',
+    icon: UilQuestionCircle,
   },
 ]

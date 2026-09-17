@@ -12,8 +12,8 @@ export default defineConfig({
   envPrefix: ['REQUIRE_AUTH'],
   server: {
     proxy: {
-      '/api': 'http://localhost:3000'
-    }
+      '/api': 'http://localhost:3000',
+    },
   },
   plugins: [
     vue(),

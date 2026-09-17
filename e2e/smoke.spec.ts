@@ -1,11 +1,11 @@
-import { test, expect } from '@playwright/test'
+import { expect, test } from '@playwright/test'
 
 test('app loads and basic components render', async ({ page }) => {
   // Navigate to the app
   await page.goto('/')
 
-  // Expect title to contain MySigMail (or wait for app to mount)
-  await expect(page).toHaveTitle(/MySigMail/i)
+  // Expect title to contain EmailSign (or wait for app to mount)
+  await expect(page).toHaveTitle(/EmailSign/i)
 
   // Wait for the main editor wrapper or a known element
   // The app renders an #app div and should have the signature preview
@@ -19,10 +19,10 @@ test('app loads and basic components render', async ({ page }) => {
   // Verify we can switch to templates
   const templatesTab = page.getByText(/Templates/i)
   await expect(templatesTab).toBeVisible()
-  
+
   // Go to Templates and verify a template can be selected
   await templatesTab.click()
-  
+
   // Assuming there's a list of templates, wait for at least one
   // The templates usually have some distinguishing class or data-attr
   // For a basic smoke test, just verifying the tab opens is good.

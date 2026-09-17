@@ -1,6 +1,66 @@
-node_modules
-dist
+# Version control
 .git
 .github
-playwright-report
-test-results
+.gitignore
+.gitattributes
+
+# Environment and secrets
+.env*
+
+# Dependencies and local build outputs
+node_modules
+dist
+dist-ssr
+*.local
+.cache
+
+# Docker and deployment configurations
+docker/
+Dockerfile*
+docker-compose*.yml
+deploy/
+
+# Tests and test artifacts
+e2e/
+playwright.config.*
+playwright-report/
+test-results/
+coverage/
+vitest.config.*
+
+# Linters, formatters, and git hooks
+eslint.config.*
+.eslintrc*
+.eslintignore
+.prettierrc*
+.prettierignore
+commitlint.config.*
+.lintstagedrc*
+
+# Editor and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Documentation and licenses
+*.md
+docs/
+LICENSE*
+LICENCE*
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Auto-generated TypeScript definitions
+auto-imports.d.ts
+components.d.ts

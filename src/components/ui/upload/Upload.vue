@@ -94,7 +94,7 @@ function onChangeInput(e: Event) {
 
 function initCropper() {
   if (cropper) {
-    cropper.replace(cropPreview.value!)
+    cropper.destroy()
   }
 
   cropper = new Cropper(imageRef.value!, {
@@ -103,7 +103,13 @@ function initCropper() {
     autoCropArea: 1,
     zoomable: false,
     crop: () => {
-      croppedPreview.value = cropper?.getCroppedCanvas().toDataURL() || ''
+      const canvas = cropper?.getCroppedCanvas()
+      if (canvas) {
+        croppedPreview.value = canvas.toDataURL()
+      }
+      else {
+        croppedPreview.value = ''
+      }
     },
   })
 }
@@ -113,13 +119,24 @@ function setAspectRatio(ratio: AcceptableValue) {
 }
 
 function getCroppedImage() {
-  return new Promise<Blob>((resolve) => {
-    cropper
-      ?.getCroppedCanvas({
+  return new Promise<Blob>((resolve, reject) => {
+    try {
+      const canvas = cropper?.getCroppedCanvas({
         width: widthResized.value || props.cropWidth,
         imageSmoothingQuality: 'medium',
       })
-      .toBlob(blob => resolve(blob!), file.value?.type, props.quality)
+      if (!canvas) {
+        return reject(new Error('Cropper canvas is not ready'))
+      }
+      canvas.toBlob((blob) => {
+        if (blob)
+          resolve(blob)
+        else reject(new Error('Failed to create image blob'))
+      }, file.value?.type, props.quality)
+    }
+    catch (err) {
+      reject(err)
+    }
   })
 }
 
@@ -129,9 +146,8 @@ async function uploadImage() {
 
   isPending.value = true
 
-  const blob = await getCroppedImage()
-
   try {
+    const blob = await getCroppedImage()
     const formData = new FormData()
     formData.append('file', blob, file.value.name)
 

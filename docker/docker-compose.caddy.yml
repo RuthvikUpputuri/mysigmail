@@ -5,12 +5,12 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile.caddy
-    image: mysigmail-static-caddy:latest
-    container_name: mysigmail-app-caddy
+    image: emailsign:latest
+    container_name: emailsign
     restart: unless-stopped
     ports:
-      - "80:80"
-      - "443:443"
+      - '80:80'
+      - '443:443'
     volumes:
       - caddy_data:/data
       - caddy_config:/config
