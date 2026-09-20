@@ -9,6 +9,12 @@ import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  envPrefix: ['REQUIRE_AUTH'],
+  server: {
+    proxy: {
+      '/api': 'http://localhost:3000',
+    },
+  },
   plugins: [
     vue(),
     tailwindcss(),

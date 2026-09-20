@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { AcceptableValue } from 'reka-ui'
 
-import { S3Client } from '@aws-sdk/client-s3'
-import { Upload } from '@aws-sdk/lib-storage'
 import 'cropperjs/dist/cropper.css'
 import Cropper from 'cropperjs'
 
@@ -25,22 +23,6 @@ interface Emits {
 }
 
 const { sonner } = useSonner()
-
-let s3Client: S3Client
-
-try {
-  s3Client = new S3Client({
-    region: import.meta.env.VITE_AWS_S3_REGION,
-    credentials: {
-      accessKeyId: import.meta.env.VITE_AWS_S3_ID,
-      secretAccessKey: import.meta.env.VITE_AWS_S3_KEY,
-    },
-  })
-}
-catch (err) {
-  console.error('Missing some of the AWS S3 credentials')
-  console.error(err)
-}
 
 let cropper: Cropper | null = null
 
@@ -81,15 +63,7 @@ const aspectRatios = [
   },
 ]
 
-const isUploadAvailable = computed(() => {
-  return (
-    !!import.meta.env.VITE_AWS_S3_URL
-    && !!import.meta.env.VITE_AWS_S3_BASKET
-    && !!import.meta.env.VITE_AWS_S3_ID
-    && !!import.meta.env.VITE_AWS_S3_KEY
-    && !!import.meta.env.VITE_AWS_S3_REGION
-  )
-})
+const isUploadAvailable = computed(() => true)
 
 const cropPreview = computed(() => {
   if (!file.value)
@@ -120,7 +94,7 @@ function onChangeInput(e: Event) {
 
 function initCropper() {
   if (cropper) {
-    cropper.replace(cropPreview.value!)
+    cropper.destroy()
   }
 
   cropper = new Cropper(imageRef.value!, {
@@ -129,7 +103,13 @@ function initCropper() {
     autoCropArea: 1,
     zoomable: false,
     crop: () => {
-      croppedPreview.value = cropper?.getCroppedCanvas().toDataURL() || ''
+      const canvas = cropper?.getCroppedCanvas()
+      if (canvas) {
+        croppedPreview.value = canvas.toDataURL()
+      }
+      else {
+        croppedPreview.value = ''
+      }
     },
   })
 }
@@ -139,13 +119,24 @@ function setAspectRatio(ratio: AcceptableValue) {
 }
 
 function getCroppedImage() {
-  return new Promise<Blob>((resolve) => {
-    cropper
-      ?.getCroppedCanvas({
+  return new Promise<Blob>((resolve, reject) => {
+    try {
+      const canvas = cropper?.getCroppedCanvas({
         width: widthResized.value || props.cropWidth,
         imageSmoothingQuality: 'medium',
       })
-      .toBlob(blob => resolve(blob!), file.value?.type, props.quality)
+      if (!canvas) {
+        return reject(new Error('Cropper canvas is not ready'))
+      }
+      canvas.toBlob((blob) => {
+        if (blob)
+          resolve(blob)
+        else reject(new Error('Failed to create image blob'))
+      }, file.value?.type, props.quality)
+    }
+    catch (err) {
+      reject(err)
+    }
   })
 }
 
@@ -155,26 +146,24 @@ async function uploadImage() {
 
   isPending.value = true
 
-  const blob = await getCroppedImage()
-
   try {
-    const key = `signature/upload/${Date.now()}-${file.value.name}`
+    const blob = await getCroppedImage()
+    const formData = new FormData()
+    formData.append('file', blob, file.value.name)
 
-    const upload = new Upload({
-      client: s3Client,
-      params: {
-        Bucket: import.meta.env.VITE_AWS_S3_BASKET,
-        Key: key,
-        Body: blob,
-        ContentType: file.value.type,
-        ACL: 'public-read',
-      },
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData,
     })
 
-    await upload.done()
+    if (!response.ok) {
+      throw new Error(`Upload failed: ${response.statusText}`)
+    }
 
-    const cdnUrl = import.meta.env.VITE_AWS_S3_URL
-    emit('uploaded', `${cdnUrl}/${key}`)
+    const data = await response.json()
+    const url = data.url || data.publicUrl
+
+    emit('uploaded', url)
 
     openDialog.value = false
     sonner({

@@ -37,6 +37,22 @@ const routes = [
     },
   },
   {
+    path: '/faq',
+    name: 'faq',
+    component: () => import('@/views/Faq.vue'),
+    meta: {
+      title: 'FAQ',
+      description: 'Signature installs, tips and issues',
+    },
+  },
+  {
+    path: '/login',
+    component: () => import('@/views/Login.vue'),
+    meta: {
+      title: 'Login',
+    },
+  },
+  {
     path: '/:pathMatch(.*)*',
     redirect: '/basic',
   },
@@ -45,4 +61,26 @@ const routes = [
 export const router = createRouter({
   history: createWebHistory(),
   routes,
+})
+
+router.beforeEach(async (to, _from, next) => {
+  try {
+    const res = await fetch('/api/auth/status')
+    if (res.ok) {
+      const data = await res.json()
+      if (data.requireAuth) {
+        if (!data.isAuthenticated && to.path !== '/login') {
+          return next('/login')
+        }
+        if (data.isAuthenticated && to.path === '/login') {
+          return next('/')
+        }
+      }
+    }
+  }
+  catch (err) {
+    console.error('Failed to check auth status', err)
+  }
+
+  next()
 })
