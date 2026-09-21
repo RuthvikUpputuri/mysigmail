@@ -119,6 +119,7 @@ Agents **must** apply these principles on every change:
   - **User Permission**: Before making architectural changes to the Backend, Storage, or Docker configs, **notify the user, explain the issue, and ask for permission to proceed**.
 
 ### Vue / Frontend Specific Rules
+- **Responsive Design**: The UI and UX must follow a Mobile-first, fully responsive design approach across mobile, tablet, laptop, and desktop.
 - Always use `<script setup lang="ts">`.
 - Prefer `computed` over methods for derived state.
 - Use `useStorage` (VueUse) for any persistence that must survive reloads.
