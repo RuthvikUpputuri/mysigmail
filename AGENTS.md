@@ -42,50 +42,28 @@ Node.js ≥ 20 required.
 
 ---
 
-## 3. Repository Structure (every important path explained)
+## 3. Repository Structure (overview of core directories)
 
 ```
 .
 ├── src/ # Frontend (Vue 3 SPA)
-│ ├── components/
-│ │ ├── addons/ # Banner, CTA, Disclaimer, Logo, MobileApp, VideoConference
-│ │ ├── basic/ # Avatar, Name, Job, Company, Website, Email, Phone fields
-│ │ ├── header/ # Top navigation / branding
-│ │ ├── layouts/ # App layout wrappers
-│ │ ├── options/ # Font, colors, avatar shape/size, separators
-│ │ ├── preview/ # Live HTML signature preview + copy button
-│ │ ├── sidebar/ # Navigation between Basic / Social / Options / Addons / Templates
-│ │ ├── social/ # Social icon links
-│ │ ├── templates/ # Template cards (SignatureTemplate1–9)
-│ │ └── ui/ # shadcn-vue primitives (Button, Input, Select, etc.)
-│ ├── composables/
-│ │ ├── signatures/
-│ │ │ ├── types/index.ts # ★ Core TypeScript types (Signature, Addon, BasicTool, OptionsTool…)
-│ │ │ └── useSignatures.ts # ★ Central state + business logic for the current signature
-│ │ ├── useCopySignature.ts # Clipboard + HTML generation helpers
-│ │ └── useSonner.ts # Toast notifications
-│ ├── data/
-│ │ ├── templates.ts # ★ Default templates + DEFAULTS object
-│ │ ├── addons.ts, socials.ts, attributes.ts, presets.ts, disclaimer-pressets.ts, analytics.ts
-│ ├── lib/utils.ts # cn() helper (clsx + tailwind-merge)
-│ ├── router/index.ts # Routes + auth guard that calls /api/auth/status
-│ ├── utils/index.ts # clone() and other pure helpers
-│ ├── views/ # Page-level components (Basic, Social, Options, Addons, Templates, Faq, Login)
-│ ├── App.vue # Root + Toaster + init()
-│ ├── main.ts
-│ └── style.css # Tailwind entry
-├── server/
-│ ├── index.js # Express app: auth (session + Argon2), /api/upload, static serving of dist/
-│ └── storage.js # ★ Pluggable upload logic (R2 → S3 → Supabase → Custom → Base64)
-├── docker/ # Multi-stage Dockerfiles + compose files (Traefik default, Caddy, Nginx)
-├── docs/ # DOCKER.md, STORAGE.md, SECURITY.md, MIGRATION.md
-├── e2e/ # Playwright config and tests
-├── public/
-├── .env.example # All configuration (auth + every storage provider)
-├── package.json # Scripts + dependencies
-├── vite.config.ts # Auto-import, Icons, Components, proxy /api → :3000
-└── AGENTS.md # This file
+│ ├── components/ # Reusable UI components and page segments
+│ ├── composables/ # Reusable Vue logic and central state (useSignatures.ts)
+│ ├── data/ # Default templates, addons, and data arrays
+│ ├── lib/ # Helper libraries (e.g., utils.ts for Tailwind 'cn' merging)
+│ ├── router/ # Vue Router and auth guards
+│ ├── utils/ # Pure helper functions
+│ └── views/ # Top-level page components
+├── server/ # Node.js backend
+│ ├── index.js # Express app, auth, upload proxy
+│ └── storage.js # Pluggable upload logic
+├── docker/ # Multi-stage Dockerfiles + compose files
+├── docs/ # Detailed architectural and deployment documentation
+├── e2e/ # Playwright E2E tests
+└── Root Configs # vite.config.ts, package.json, eslint.config.js, etc.
 ```
+
+*Note: If any new critical files or directories are created outside of the current structure, make sure only the structure overview above is updated in this `AGENTS.md` file to keep it accurate.*
 
 **Key mental model**
 - The entire signature lives in one reactive object: `installed` (from `useSignatures()`).
