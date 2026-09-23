@@ -37,12 +37,14 @@ const open = ref(false)
               <a
                 href="https://paypal.me/antongithub"
                 target="_blank"
+                rel="noopener noreferrer"
               > PayPal </a>
             </UiButton>
             <UiButton as-child>
               <a
                 href="https://opencollective.com/masscode"
                 target="_blank"
+                rel="noopener noreferrer"
               > Open Collective </a>
             </UiButton>
           </div>
