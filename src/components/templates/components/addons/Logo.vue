@@ -35,6 +35,7 @@ const avatarSize = computed(() => {
         <a
           :href="normalizeUrl(logo.link)"
           target="_blank"
+          rel="noopener noreferrer"
         >
           <img
             :src="logo.image || DEFAULT_LOGO_IMAGE"

@@ -30,6 +30,7 @@ const banner = computed(() => getAddonValue<AddonBanner>('banner'))
         <a
           :href="normalizeUrl(banner.link)"
           target="_blank"
+          rel="noopener noreferrer"
         >
           <img
             :src="banner.image || DEFAULT_BANNER_IMAGE"

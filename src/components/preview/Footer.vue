@@ -29,6 +29,7 @@ const links = computed(() => {
           <a
             :href="i.href"
             target="_blank"
+            rel="noopener noreferrer"
           >
             {{ i.name }}
           </a>
